@@ -128,7 +128,7 @@ export default function ProjectsPage() {
                   placeholder="ค้นหาโครงการ..."
                   fluid
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e: any) => setSearchTerm(e.target.value)}
                 />
               </Grid.Column>
               <Grid.Column width={4}>
@@ -144,7 +144,7 @@ export default function ProjectsPage() {
                     { key: 'cancelled', text: 'ยกเลิก', value: 'cancelled' },
                   ]}
                   value={statusFilter}
-                  onChange={(_, { value }) => setStatusFilter(value as string)}
+                  onChange={(_: any, { value }: any) => setStatusFilter(value as string)}
                 />
               </Grid.Column>
               <Grid.Column width={4}>
@@ -159,7 +159,7 @@ export default function ProjectsPage() {
                     { key: '2569', text: '2569', value: '2569' },
                   ]}
                   value={fiscalYearFilter}
-                  onChange={(_, { value }) => setFiscalYearFilter(value as string)}
+                  onChange={(_: any, { value }: any) => setFiscalYearFilter(value as string)}
                 />
               </Grid.Column>
             </Grid.Row>
@@ -218,7 +218,7 @@ export default function ProjectsPage() {
                       <Button
                         icon
                         size="mini"
-                        onClick={(e) => {
+                        onClick={(e: any) => {
                           e.stopPropagation()
                           router.push(`/projects/${project.id}`)
                         }}

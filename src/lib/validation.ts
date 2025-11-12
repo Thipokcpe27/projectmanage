@@ -98,8 +98,8 @@ export function validateMilestoneInProjectRange(
  * ตรวจสอบว่าน้ำหนักรวมไม่เกิน 100%
  */
 export function validateTotalWeight(weights: (number | null | undefined)[]): boolean {
-  const total = weights.reduce((sum, w) => sum + (w || 0), 0)
-  return total <= 100
+  const total = weights.reduce((sum, w) => (sum || 0) + (w || 0), 0)
+  return (total || 0) <= 100
 }
 
 /**

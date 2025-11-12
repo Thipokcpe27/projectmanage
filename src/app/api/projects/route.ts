@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
         budget: validated.budget,
         status: 'active',
         milestones: {
-          create: validated.milestones.map((m) => ({
+          create: validated.milestones.map((m: any) => ({
             index_no: m.index_no,
             name: m.name,
             description: m.description,

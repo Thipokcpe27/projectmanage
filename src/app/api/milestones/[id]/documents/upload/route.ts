@@ -189,7 +189,7 @@ export async function GET(
 
   return NextResponse.json({
     ok: true,
-    data: documents.map((doc) => ({
+    data: documents.map((doc: any) => ({
       ...doc,
       size_bytes: doc.size_bytes?.toString(),
     })),
