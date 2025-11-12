@@ -108,12 +108,24 @@ declare module 'semantic-ui-react' {
   }
   export const Step: React.FC<StepProps> & {
     Group: React.FC<any>
+    Content: React.FC<any>
+    Title: React.FC<any>
+    Description: React.FC<any>
   }
 
   export interface FormProps {
     [key: string]: any
   }
-  export const Form: React.FC<FormProps>
+  export const Form: React.FC<FormProps> & {
+    Field: React.FC<any>
+    Group: React.FC<any>
+    Input: React.FC<any>
+    TextArea: React.FC<any>
+    Select: React.FC<any>
+    Checkbox: React.FC<any>
+    Radio: React.FC<any>
+    Button: React.FC<any>
+  }
 
   export interface ProgressProps {
     [key: string]: any
@@ -145,4 +157,19 @@ declare module 'semantic-ui-react' {
   export const Tab: React.FC<TabProps> & {
     Pane: React.FC<any>
   }
+
+  export interface ModalProps {
+    [key: string]: any
+  }
+  export const Modal: React.FC<ModalProps> & {
+    Header: React.FC<any>
+    Content: React.FC<any>
+    Actions: React.FC<any>
+    Description: React.FC<any>
+  }
+
+  export interface PaginationProps {
+    [key: string]: any
+  }
+  export const Pagination: React.FC<PaginationProps>
 }
