@@ -1,0 +1,189 @@
+// prisma/schema.prisma
+
+// --- Generators & Datasource ---
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- Enums ---
+enum Role {
+  ADMIN
+  DEPT_LEAD
+  PM
+  MEMBER
+  READONLY
+}
+
+enum DocStatus {
+  full
+  missing
+  na
+}
+
+enum ProjectStatus {
+  active
+  completed
+  on_hold
+  cancelled
+}
+
+enum MilestoneStatus {
+  open
+  in_progress
+  completed
+  overdue
+}
+
+// --- Models ---
+model Department {
+  id       String    @id @default(uuid())
+  code     String    @unique
+  name     String
+  users    User[]
+  projects Project[]
+
+  @@map("departments")
+}
+
+model User {
+  id            String        @id @default(uuid())
+  name          String
+  email         String        @unique
+  role          Role
+  is_active     Boolean       @default(true)
+  image         String?
+  department    Department?   @relation(fields: [departmentId], references: [id])
+  departmentId  String?
+  projectsOwned Project[]     @relation("ProjectOwner")
+  documents     Document[]    @relation("Uploader")
+  activityLogs  ActivityLog[] @relation("Actor")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Project {
+  id              String        @id @default(uuid())
+  code            String        @unique
+  name            String
+  description     String?
+  fiscal_year     Int
+  status          ProjectStatus @default(active)
+  budget          Decimal?      @db.Decimal(14, 2)
+  start_date      DateTime
+  end_date        DateTime
+  drive_folder_id String?
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+
+  // relations
+  department   Department  @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  departmentId String
+  owner        User?       @relation("ProjectOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  ownerId      String?
+  milestones   Milestone[]
+
+  @@map("projects")
+}
+
+model Milestone {
+  id              String          @id @default(uuid())
+  index_no        Int
+  name            String
+  description     String?
+  due_date        DateTime
+  weight_percent  Int?
+  status          MilestoneStatus @default(open)
+  drive_folder_id String?
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @updatedAt
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+
+  documents    Document[]
+  requirements DocRequirementMilestone[]
+  compliance   DocCompliance[]
+
+  @@unique([projectId, index_no])
+  @@map("milestones")
+}
+
+model Document {
+  id            String   @id @default(uuid())
+  drive_file_id String
+  file_name     String
+  file_type     String?
+  version       Int?     @default(1)
+  url           String
+  size_bytes    BigInt?
+  uploaded_at   DateTime @default(now())
+  meta_json     Json?
+
+  milestone   Milestone @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  milestoneId String
+
+  uploader   User?   @relation("Uploader", fields: [uploadedBy], references: [id], onDelete: SetNull)
+  uploadedBy String?
+
+  @@map("documents")
+}
+
+model DocRequirementTemplate {
+  id                  String  @id @default(uuid())
+  scope               String // global | department | project_type
+  scope_ref           String?
+  code                String
+  name                String
+  is_required_default Boolean @default(true)
+  note                String?
+
+  @@map("doc_requirement_templates")
+}
+
+model DocRequirementMilestone {
+  id              String    @id @default(uuid())
+  milestone       Milestone @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  milestoneId     String
+  requirement_code String
+  name            String
+  is_required     Boolean   @default(true)
+  note            String?
+
+  @@map("doc_requirements_milestone")
+}
+
+model DocCompliance {
+  id               String     @id @default(uuid())
+  milestone        Milestone  @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  milestoneId      String
+  requirement_code String
+  status           DocStatus
+  checked_by       String?
+  checked_at       DateTime?
+  note             String?
+
+  @@unique([milestoneId, requirement_code])
+  @@map("doc_compliance")
+}
+
+model ActivityLog {
+  id          String   @id @default(uuid())
+  action      String
+  entity_type String
+  entity_id   String?
+  metadata    Json?
+  ip          String?
+  created_at  DateTime @default(now())
+
+  actor   User?   @relation("Actor", fields: [actorId], references: [id], onDelete: SetNull)
+  actorId String?
+
+  @@map("activity_logs")
+}
