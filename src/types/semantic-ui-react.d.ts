@@ -97,6 +97,10 @@ declare module 'semantic-ui-react' {
   }
   export const Card: React.FC<CardProps> & {
     Group: React.FC<any>
+    Content: React.FC<any>
+    Header: React.FC<any>
+    Meta: React.FC<any>
+    Description: React.FC<any>
   }
 
   export interface StepProps {
@@ -119,10 +123,26 @@ declare module 'semantic-ui-react' {
   export interface ListProps {
     [key: string]: any
   }
-  export const List: React.FC<ListProps>
+  export const List: React.FC<ListProps> & {
+    Item: React.FC<any>
+    Icon: React.FC<any>
+    Content: React.FC<any>
+    Header: React.FC<any>
+    Description: React.FC<any>
+  }
 
   export interface BreadcrumbProps {
     [key: string]: any
   }
-  export const Breadcrumb: React.FC<BreadcrumbProps>
+  export const Breadcrumb: React.FC<BreadcrumbProps> & {
+    Section: React.FC<any>
+    Divider: React.FC<any>
+  }
+
+  export interface TabProps {
+    [key: string]: any
+  }
+  export const Tab: React.FC<TabProps> & {
+    Pane: React.FC<any>
+  }
 }
